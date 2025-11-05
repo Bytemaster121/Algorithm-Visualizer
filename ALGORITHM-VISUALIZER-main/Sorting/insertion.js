@@ -2,11 +2,8 @@ var beep = new Audio('beep3.mp3')
 var mouseclick = new Audio('Mouseclick.mp3')
 var done = new Audio('wrong.mp3')
 
-
-
 const InsertionSortButton = document.querySelector(".InsertionSort");
 InsertionSortButton.addEventListener('click', async function () {
-    // headingchange1.textContent = "Insertion Sort";
     selectText.innerHTML = `Insertion Sort..`
     mouseclick.play()
     const description = document.querySelector('#description')
@@ -15,17 +12,12 @@ InsertionSortButton.addEventListener('click', async function () {
     section.style.height = '184vh'
     await descriptionText_insertion();
 
-
     disableSortingBtn();
     disableSizeSlider();
     disableNewArrayBtn();
     await InsertionSort();
-    // enableSortingBtn();
-    // enableSizeSlider();
     enableNewArrayBtn();
 });
-
-
 
 async function descriptionText_insertion() {
     const section = document.querySelector('#fullbody')
@@ -35,7 +27,6 @@ async function descriptionText_insertion() {
     description.style.display = 'flex'
 
     const code = document.querySelector('#code_java')
-    // console.log(code.innerHTML)
     code.innerHTML = `// Java program for implementation of Insertion Sort
 public class InsertionSort {
 /*Function to sort array using insertion sort*/
@@ -77,54 +68,72 @@ public static void main(String args[])
 
     printArray(arr);
 }
-};
+};`
 
-
-
-
-`
     const time = document.querySelector('#time')
     time.innerHTML = `The worst-case (and average-case) complexity of the insertion sort algorithm is O(n²). Meaning that, in the worst case, the time taken to sort a list is proportional to the square of the number of elements in the list. 
 The best-case time complexity of insertion sort algorithm is O(n) time complexity.
 
-Time Complexity: O(N^2)
-`
+Time Complexity: O(N^2)`
 
     const space = document.querySelector('#space')
     space.innerHTML = `The space complexity of insertion sort is <b>O (1)</b>.
 It is because, in insertion sort, an extra variable is required for swapping.
 
-Auxiliary Space: O(1)
-    `
-
-
+Auxiliary Space: O(1)`
 }
 
-
 async function InsertionSort() {
-    const element = document.querySelectorAll('.bar');
-    element[0].style.background = 'cyan';
-    for (let i = 1; i < element.length; i++) {
+    let n = arrayData.length;
+    
+    updateBarColor(0, 'cyan');
+    await waitforme(delay);
+    
+    for (let i = 1; i < n; i++) {
+        let key = arrayData[i];
         let j = i - 1;
-        let p = element[i].style.height;
-        element[i].style.background = 'rgb(250, 5, 54)';
+        
+        updateBarColor(i, 'rgb(250, 5, 54)');
         await waitforme(delay);
 
-        while (j >= 0 && (parseInt(element[j].style.height) > parseInt(p))) {
-            element[j].style.background = 'rgb(9, 102, 2)';
-            element[j + 1].style.height = element[j].style.height;
+        while (j >= 0 && arrayData[j] > key) {
+            updateBarColor(j, 'rgb(9, 102, 2)');
+            
+            // Shift element
+            arrayData[j + 1] = arrayData[j];
+            
+            // Re-render
+            renderBars();
+            
+            // Recolor
+            updateBarColor(j, 'rgb(9, 102, 2)');
+            updateBarColor(j + 1, 'rgb(250, 5, 54)');
+            
             j--;
             beep.play();
             await waitforme(delay);
 
-            for (let k = i; k >= 0; k--) {
-                element[k].style.background = 'rgb(3, 252, 11)';
-
+            // Color sorted portion
+            for (let k = 0; k <= i; k++) {
+                if (k <= j + 1) {
+                    updateBarColor(k, 'rgb(3, 252, 11)');
+                }
             }
         }
-        element[j + 1].style.height = p;
-        element[i].style.background = 'rgb(3, 252, 11)';
+        
+        arrayData[j + 1] = key;
+        
+        // Re-render
+        renderBars();
+        
+        // Color all sorted elements
+        for (let k = 0; k <= i; k++) {
+            updateBarColor(k, 'rgb(3, 252, 11)');
+        }
+        
+        await waitforme(delay);
     }
-    selectText.innerHTML=`Sorting Complete!`
+    
+    selectText.innerHTML = `Sorting Complete!`
     done.play();
 }

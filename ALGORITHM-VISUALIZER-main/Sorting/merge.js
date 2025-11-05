@@ -9,46 +9,42 @@
 var beep = new Audio('beep3.mp3')
 var mouseclick = new Audio('Mouseclick.mp3')
 var done = new Audio('wrong.mp3')
+
 const MergeSortButton = document.querySelector(".MergeSort");
 
 MergeSortButton.addEventListener('click', async function () {
-   // headingchange1.textContent = "Merge Sort";
-   selectText.innerHTML = `Merge Sort..`
-   mouseclick.play()
-   const description = document.querySelector('#description')
-   description.style.display = 'flex'
-   const section = document.querySelector('#fullbody')
-   section.style.height = '184vh'
+    selectText.innerHTML = `Merge Sort..`
+    mouseclick.play()
+    const description = document.querySelector('#description')
+    description.style.display = 'flex'
+    const section = document.querySelector('#fullbody')
+    section.style.height = '184vh'
 
-   await descriptionText_merge();
-   let element = document.querySelectorAll('.bar');
-   let si = 0;
-   let ei = parseInt(element.length) - 1;
-   disableSortingBtn();
-   disableSizeSlider();
-   disableNewArrayBtn();
+    await descriptionText_merge();
+    
+    let si = 0;
+    let ei = arrayData.length - 1;
+    
+    disableSortingBtn();
+    disableSizeSlider();
+    disableNewArrayBtn();
 
-   await MergeSort(element, si, ei);
-   selectText.innerHTML=`Sorting Complete!`
-   done.play();
-   // enableSortingBtn();
-   // enableSizeSlider();
-   enableNewArrayBtn();
-
+    await MergeSort(si, ei);
+    
+    selectText.innerHTML = `Sorting Complete!`
+    done.play();
+    enableNewArrayBtn();
 });
 
-
-
 async function descriptionText_merge() {
-   const section = document.querySelector('#fullbody')
-   section.style.height = `184vh`
+    const section = document.querySelector('#fullbody')
+    section.style.height = `184vh`
 
-   const description = document.querySelector('#description')
-   description.style.display = 'flex'
+    const description = document.querySelector('#description')
+    description.style.display = 'flex'
 
-   const code = document.querySelector('.language-java')
-   // console.log(code.innerHTML)
-   code.innerHTML = `/* Java program for Merge Sort */
+    const code = document.querySelector('.language-java')
+    code.innerHTML = `/* Java program for Merge Sort */
 class MergeSort {
 // Merges two subarrays of arr[].
 // First subarray is arr[l..m]
@@ -103,8 +99,7 @@ void merge(int arr[], int l, int m, int r)
    }
 }
 
-// Main function that sorts arr[l..r] using
-// merge()
+// Main function that sorts arr[l..r] using merge()
 void sort(int arr[], int l, int r)
 {
    if (l < r) {
@@ -140,147 +135,123 @@ public static void main(String args[])
    MergeSort ob = new MergeSort();
    ob.sort(arr, 0, arr.length - 1);
 
-   System.out.println("\nSorted array");
+   System.out.println("\\nSorted array");
    printArray(arr);
 }
-}
+}`
 
-
-`
-   const time = document.querySelector('#time')
-   time.innerHTML = `Time Complexity: O(N log(N)),  Sorting arrays on different machines. 
+    const time = document.querySelector('#time')
+    time.innerHTML = `Time Complexity: O(N log(N)),  Sorting arrays on different machines. 
 Merge Sort is a recursive algorithm and time complexity can be expressed as following recurrence relation. 
 
-T(n) = 2T(n/2) + θ(n)
-`
+T(n) = 2T(n/2) + θ(n)`
 
-   const space = document.querySelector('#space')
-   space.innerHTML = `Auxiliary Space: O(n), In merge sort all elements are copied into an auxiliary array. 
+    const space = document.querySelector('#space')
+    space.innerHTML = `Auxiliary Space: O(n), In merge sort all elements are copied into an auxiliary array. 
 So N auxiliary space is required for merge sort.`
-
-
 }
 
-
-
-
-
-
-
-
-
-//Divide
-
-async function MergeSort(element, si, ei) {
-   if (si >= ei) {
-      return;
-
-   }
-   const middle = si + Math.floor((ei - si) / 2);
-   await MergeSort(element, si, middle);
-   await MergeSort(element, middle + 1, ei);
-
-   await Merge(element, si, middle, ei);          // si--> starting index and ei --> ending index
-
+// Divide
+async function MergeSort(si, ei) {
+    if (si >= ei) {
+        return;
+    }
+    
+    const middle = si + Math.floor((ei - si) / 2);
+    await MergeSort(si, middle);
+    await MergeSort(middle + 1, ei);
+    await Merge(si, middle, ei);
 }
 
-//Conquer
+// Conquer
+async function Merge(low, mid, high) {
+    const a1 = mid - low + 1;
+    const a2 = high - mid;
+    let left = new Array(a1);
+    let right = new Array(a2);
 
-async function Merge(element, low, mid, high) {
+    // Copy data to temp arrays
+    for (let i = 0; i < a1; i++) {
+        await waitforme(delay);
+        beep.play();
+        updateBarColor(low + i, 'red');
+        left[i] = arrayData[low + i];
+    }
 
+    for (let i = 0; i < a2; i++) {
+        await waitforme(delay);
+        beep.play();
+        updateBarColor(mid + 1 + i, 'yellow');
+        right[i] = arrayData[mid + 1 + i];
+    }
+    
+    await waitforme(delay);
 
-   const a1 = mid - low + 1;
-   const a2 = high - mid;
-   let left = new Array(a1);
-   let right = new Array(a2);
+    // Merge the arrays back
+    let i = 0, j = 0, k = low;
+    
+    while (i < a1 && j < a2) {
+        beep.play();
+        await waitforme(delay);
+        
+        if (left[i] <= right[j]) {
+            arrayData[k] = left[i];
+            i++;
+        } else {
+            arrayData[k] = right[j];
+            j++;
+        }
+        
+        // Re-render
+        renderBars();
+        
+        // Color appropriately
+        if ((a1 + a2) === arrayData.length) {
+            updateBarColor(k, 'rgb(0,255,0)');
+        } else {
+            updateBarColor(k, 'lightgreen');
+        }
+        
+        k++;
+    }
 
-   for (let i = 0; i < a1; i++) {
-      await waitforme(delay);
-      beep.play();
-      element[low + i].style.background = 'red';
-      left[i] = element[low + i].style.height;
+    // Copy remaining elements of left[]
+    while (i < a1) {
+        beep.play();
+        await waitforme(delay);
+        
+        arrayData[k] = left[i];
+        
+        // Re-render
+        renderBars();
+        
+        if ((a1 + a2) === arrayData.length) {
+            updateBarColor(k, 'rgb(0,255,0)');
+        } else {
+            updateBarColor(k, 'lightgreen');
+        }
+        
+        i++;
+        k++;
+    }
 
-
-   }
-
-
-   for (let i = 0; i < a2; i++) {
-      await waitforme(delay);
-      beep.play();
-      element[mid + 1 + i].style.background = 'yellow';
-      right[i] = element[mid + 1 + i].style.height;
-   }
-   await waitforme(delay);
-
-
-
-   let i = 0, j = 0, k = low;
-   while (i < a1 && j < a2) {
-      beep.play();
-      await waitforme(delay);
-      if (parseInt(left[i]) <= parseInt(right[j])) {
-         if ((a1 + a2) === element.length) {
-            element[k].style.background = 'rgb(0,255,0)';
-         }
-
-         else {
-            element[k].style.background = 'lightgreen';
-
-
-
-         }
-
-         element[k].style.height = left[i];
-
-         i++;
-         k++;
-
-      }
-
-      else {
-         if ((a1 + a2) === element.length) {
-            element[k].style.background = 'rgb(0,255,0)';
-         }
-         else {
-            element[k].style.background = 'lightgreen';
-         }
-
-         element[k].style.height = right[j];
-         j++;
-         k++;
-      }
-
-   }
-   while (i < a1) {
-      beep.play();
-      await waitforme(delay);
-      if ((a1 + a2) === element.length) {
-         element[k].style.background = 'rgb(0,255,0)';
-      }
-      else {
-         element[k].style.background = 'lightgreen';
-
-      }
-      element[k].style.height = left[i];
-      i++;
-      k++;
-   }
-
-   while (j < a2) {
-      beep.play();
-      await waitforme(delay);
-      if ((a1 + a2) === element.length) {
-         element[k].style.background = 'rgb(0,255,0)';
-      }
-      else {
-         element[k].style.background = 'lightgreen';
-
-      }
-
-      element[k].style.height = right[j];
-      j++;
-      k++;
-   }
-
+    // Copy remaining elements of right[]
+    while (j < a2) {
+        beep.play();
+        await waitforme(delay);
+        
+        arrayData[k] = right[j];
+        
+        // Re-render
+        renderBars();
+        
+        if ((a1 + a2) === arrayData.length) {
+            updateBarColor(k, 'rgb(0,255,0)');
+        } else {
+            updateBarColor(k, 'lightgreen');
+        }
+        
+        j++;
+        k++;
+    }
 }
-

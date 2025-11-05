@@ -28,7 +28,7 @@ A dynamic and interactive web-based Algorithm Visualizer that helps users unders
 
 **🎯 Live Demo**
 
-    👉 View Live Demo
+    👉 https://algorithm-visualizer-nine-ruddy.vercel.app/
 
 
        
